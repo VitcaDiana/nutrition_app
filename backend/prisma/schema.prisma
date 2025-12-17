@@ -6,11 +6,13 @@
 
 generator client {
   provider = "prisma-client"
-  output   = "../generated/prisma"
+  output = "../../generated/prisma"
+ 
 }
 
 datasource db {
   provider = "mysql"
+
 }
 
 model User {
