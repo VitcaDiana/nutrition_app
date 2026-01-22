@@ -6,7 +6,7 @@
 
 generator client {
   provider = "prisma-client"
-  output = "../../generated/prisma"
+  output = "./generated/prisma"
  
 }
 
@@ -20,31 +20,22 @@ model User {
   email           String           @unique
   password        String
   name            String
-  preferences     Preferences?
-  searchHistory   SearchHistory[]
+  role            Role             @default(USER)
+  Preferences     Preferences?
 }
 
-model Preferences {
-  id           Int    @id @default(autoincrement())
-  userId       Int    @unique
-  calories     Int?
-  allergies    Json   @default("[]")
-  dislikes     Json   @default("[]")
-  conditions   Json   @default("[]")
-  user         User   @relation(fields: [userId], references: [id])
+enum Role{
+  USER
+  FARMER
+  NUTRITIONIST
 }
 
-model RecipeCache {
-  id                Int    @id @default(autoincrement())
-  title             String
-  usedIngredients   Json
-  missedIngredients Json
-  image             String?
-}
+  model Preferences {
+  id         Int     @id @default(autoincrement())
+  userId     Int     @unique
+  allergies  String?
+  dislikes   String?
+  conditions String?
 
-model SearchHistory {
-  id       Int    @id @default(autoincrement())
-  userId   Int
-  query    String
-  user     User   @relation(fields: [userId], references: [id])
+  user       User    @relation(fields: [userId], references: [id])
 }

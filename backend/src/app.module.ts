@@ -1,16 +1,16 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { AppController } from './app.controller.js';
+import { AppService } from './app.service.js';
 import { UsersModule } from './modules/users/users.module.js';
-import { PreferencesModule } from './modules/preferences/preferences.module.js';
-import { UsersService } from './modules/users/users.service';
-import { PreferencesService } from './modules/preferences/preferences.service';
-import { UsersController } from './modules/users/users.controller';
-import { PreferencesController } from './modules/preferences/preferences.controller';
+import { UsersService } from './modules/users/users.service.js';
+import { UsersController } from './modules/users/users.controller.js';
+import { RolesGuard } from './auth/roles.guard.js';
+import { JwtAuthGuard } from './auth/jwt-auth.guard.js';
+
 
 @Module({
-  imports: [UsersModule, PreferencesModule],
-  // controllers: [UsersController,PreferencesController],
-  // providers: [UsersService,PreferencesService],
+  imports: [UsersModule],
+ // controllers: [UsersController],
+ // providers: [RolesGuard,JwtAuthGuard],
 })
 export class AppModule {}
