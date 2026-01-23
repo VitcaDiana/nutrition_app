@@ -17,9 +17,11 @@ export class IngredientsController {
         @Body('name') name: string,
         @Body('quantity') quantity: number,
         @Body('unit') unit: string,
+        @Body('category') category: string,
+        @Body('expiresAt') expiresAt: string,
         @Req() req,
     ){
-        return this.service.create(name,quantity,unit,req.user.sub);
+        return this.service.create(name,quantity,unit,category,new Date(expiresAt),req.user.sub);
     }
 
     @Get('mine')
@@ -44,5 +46,36 @@ export class IngredientsController {
         @Req() req,
     ) {
         return this.service.delete(+id, req.user.sub);
+    }
+
+    @Get('expiring')
+    getExpiringSoon(@Req() req){
+        return this.service.findExpiresSoon(req.user.sub);
+    }
+
+    @Get('category/:category')
+    getByCategory(
+        @Param('category') category: string,
+        @Req() req,
+    ){
+        return this.service.findByCategory(req.user.sub, category);
+    }
+
+    @Get('expired')
+    getExpired(@Req() req){
+        return this.service.findExpires(req.user.sub);
+    }
+
+    @Get('expiring/:days')
+    getExpiringDays(
+        @Param('days') days : string,
+        @Req() req,
+    ) {
+        return this.service.findExpiringInDays(req.user.sub, Number(days));
+    }
+
+    @Get('status')
+    getWithStatus(@Req() req) {
+        return this.service.getWithStatus(req.user.sub);
     }
 }

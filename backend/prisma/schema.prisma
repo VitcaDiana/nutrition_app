@@ -23,6 +23,7 @@ model User {
   role            Role             @default(USER)
   Preferences     Preferences?
   ingredients     Ingredient[]
+  favoriteRecipe  FavoriteRecipe[]
 }
 
 enum Role{
@@ -45,6 +46,17 @@ model Ingredient {
   name       String
   quantity   Float
   unit       String
+  category   String
+  expiresAt  DateTime
   userId     Int
   user       User   @relation(fields: [userId], references:[id])
+}
+
+model FavoriteRecipe {
+  id        Int     @id @default(autoincrement())
+  recipeId  Int
+  title     String
+  image     String
+  userId    Int
+  user      User    @relation(fields: [userId], references: [id])
 }

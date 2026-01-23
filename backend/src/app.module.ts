@@ -7,10 +7,13 @@ import { UsersController } from './modules/users/users.controller.js';
 import { RolesGuard } from './auth/roles.guard.js';
 import { JwtAuthGuard } from './auth/jwt-auth.guard.js';
 import { IngredientsModule } from './ingredients/ingredients.module.js';
+import { ConfigModule } from '@nestjs/config';
+import { RecipesModule } from './recipes/recipes.module.js';
+
 
 
 @Module({
-  imports: [UsersModule, IngredientsModule],
+  imports: [UsersModule, IngredientsModule, ConfigModule.forRoot(), RecipesModule],
  // controllers: [UsersController],
  // providers: [RolesGuard,JwtAuthGuard],
 })
