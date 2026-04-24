@@ -1,43 +1,51 @@
-import { Body, Controller, Param, Post, Get, UseGuards } from '@nestjs/common';
-import { PreferencesService } from './preferences.service';
-import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
-import { RolesGuard } from '../../auth/roles.guard';
-import { Roles } from '../../auth/roles.decorator';
+import { Body, Controller, Param, Post, Get, UseGuards, Req } from '@nestjs/common';
+import { PreferencesService } from './preferences.service.js';
+import { JwtAuthGuard } from '../../auth/jwt-auth.guard.js';
+import { Roles } from '../../auth/roles.decorator.js';
+import { RolesGuard } from '../../auth/roles.guard.js';
 
 @Controller('preferences')
 export class PreferencesController {
   constructor(private readonly preferencesService: PreferencesService) {}
 
-  // doar NUTRITIONIST poate vedea preferințele unui user
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('NUTRITIONIST')
-  @Get(':userId')
-  async get(@Param('userId') userId: string) {
-    return this.preferencesService.getPreferences(parseInt(userId));
+  @UseGuards(JwtAuthGuard)
+  @Get('me')
+  getMyPreferencea(@Req() req){
+    return this.preferencesService.getPreferences(req.user.sub);
   }
 
-  // orice user cu token valid poate actualiza preferințele proprii
-  @UseGuards(JwtAuthGuard)
-  @Post(':userId')
-  async update(
-    @Param('userId') userId: string,
+   @UseGuards(JwtAuthGuard)
+   @Post('me')
+   updateMyPreferences(
+    @Req() req,
     @Body('allergies') allergies: string,
     @Body('dislikes') dislikes: string,
     @Body('conditions') conditions: string,
   ) {
     return this.preferencesService.updatePreferences(
-      parseInt(userId),
+      req.user.sub,
       allergies,
       dislikes,
       conditions,
     );
   }
 
+
+  // doar NUTRITIONIST poate vedea preferințele unui user
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('NUTRITIONIST')
+  @Get(':userId')
+   getUserPreferences(@Req() req, @Param('userId') userId: string) {
+    return this.preferencesService.getPreferences(+userId);
+  }
+
+  // orice user cu token valid poate actualiza preferințele proprii
+ 
   // opțional: lista tuturor preferințelor (poate fi protejată)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('NUTRITIONIST')
   @Get()
-  async getAll() {
+ getAll() {
     return this.preferencesService.findAll();
   }
 }

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard.js';
 import { RecipesService } from './recipes.service.js';
 
@@ -27,4 +27,17 @@ export class RecipesController {
     getFavorites(@Req() req){
         return this.service.getFavorites(req.user.sub);
     }
+    @Get('for-me')
+    getRecipesForMe(@Req() req){
+        return this.service.getRecipesWithPreferences(req.user.sub);
+    }
+
+    @Get(':id')
+    getDetails(@Param('id') id: string) {
+         return this.service.getRecipeDetails(+id);
+      }
+      @Delete('favorite/:id')
+      removeFavorite(@Param('id') id : string){
+        return this.service.removeFavorite(+id);
+      }
 }

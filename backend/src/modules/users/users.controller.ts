@@ -5,6 +5,7 @@ import { Role } from '../../../prisma/generated/prisma/enums.js';
 import { JwtAuthGuard } from '../../auth/jwt-auth.guard.js';
 import { Roles } from '../../auth/roles.decorator.js';
 import { RolesGuard } from '../../auth/roles.guard.js';
+import { prisma } from '../../prisma/prisma.client.js';
 
 @Controller('users')
 export class UsersController {
@@ -34,20 +35,34 @@ export class UsersController {
   }
 
   @Get('me')
+  @UseGuards(JwtAuthGuard)
   getMe(@Req() req){
     return req.user;
   }
-  @Post('create-resource')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.FARMER)
-  createResource() {
-    return { message: 'Resursă creată de FARMER' };
-  }
-  @Get('reports')
- @UseGuards(JwtAuthGuard, RolesGuard)
+//   @Post('create-resource')
+//   @UseGuards(JwtAuthGuard, RolesGuard)
+//   @Roles(Role.FARMER)
+//   createResource() {
+//     return { message: 'Resursă creată de FARMER' };
+//   }
+//   @Get('reports')
+//  @UseGuards(JwtAuthGuard, RolesGuard)
+//   @Roles(Role.NUTRITIONIST)
+//   viewReports() {
+//     return { message: 'Rapoarte pentru NUTRITIONIST' };
+//   }
+
+  @Get('clients')
+  @UseGuards(JwtAuthGuard,RolesGuard)
   @Roles(Role.NUTRITIONIST)
-  viewReports() {
-    return { message: 'Rapoarte pentru NUTRITIONIST' };
+  getClient(){
+    return this.usersService.findAll();
   }
-  
+  @Get('nutritionists')
+   async getNutritionists() {
+  return prisma.user.findMany({
+    where: { role: 'NUTRITIONIST' },
+    select: { id: true, name: true, email: true }
+  });
+}
 }

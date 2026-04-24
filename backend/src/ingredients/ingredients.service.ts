@@ -89,5 +89,10 @@ export class IngredientsService {
             })
         );
     }
-    
+    async updateIngredientQuantity(id: number, newQuantity: number) {
+  return prisma.ingredient.update({
+    where: { id },
+    data: { quantity: newQuantity },
+  });
+}
 }

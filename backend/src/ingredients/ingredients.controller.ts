@@ -78,4 +78,9 @@ export class IngredientsController {
     getWithStatus(@Req() req) {
         return this.service.getWithStatus(req.user.sub);
     }
+    
+@Patch(':id/quantity')
+updateQuantity(@Param('id') id: string, @Body() body: { amount: number }) {
+  return this.service.updateIngredientQuantity(+id, body.amount);
+}
 }

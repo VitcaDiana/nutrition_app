@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { prisma } from '../../prisma/prisma.client';
+import { prisma } from '../../prisma/prisma.client.js';
 
 @Injectable()
 export class PreferencesService {
@@ -23,4 +23,6 @@ export class PreferencesService {
   async findAll() {
     return prisma.preferences.findMany();
   }
+
+
 }

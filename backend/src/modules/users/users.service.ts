@@ -1,5 +1,5 @@
-// src/modules/users/users.service.ts
-import { Injectable } from '@nestjs/common';
+
+import { Get, Injectable, UseGuards } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { throwError } from 'rxjs';
 import { access } from 'fs';
@@ -7,6 +7,8 @@ import { AuthService } from '../../auth/auth.service.js';
 import { prisma } from '../../prisma/prisma.client.js';
 import { isMapIterator } from 'util/types';
 import { Role } from '../../../prisma/generated/prisma/enums.js';
+import { Roles } from '../../auth/roles.decorator.js';
+import { RolesGuard } from '../../auth/roles.guard.js';
 
 @Injectable()
 export class UsersService {
@@ -40,6 +42,23 @@ export class UsersService {
       access_token: this.authService.generateToken(user),
     };
   }
+
+  findAll(){
+    return prisma.user.findMany({
+      include:{
+        nutritionProfile: true,
+        mealPlans: true,
+      },
+    });
+  }
+  @Get('all-patients')
+@UseGuards(RolesGuard)
+@Roles('NUTRITIONIST')
+async getMyPatients() {
+  return prisma.nutritionProfile.findMany({
+    include: { user: true }
+  });
+}
 }
 
 

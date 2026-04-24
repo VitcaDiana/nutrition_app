@@ -16,14 +16,21 @@ datasource db {
 }
 
 model User {
-  id              Int              @id @default(autoincrement())
-  email           String           @unique
-  password        String
-  name            String
-  role            Role             @default(USER)
-  Preferences     Preferences?
-  ingredients     Ingredient[]
-  favoriteRecipe  FavoriteRecipe[]
+  id                      Int              @id @default(autoincrement())
+  email                   String           @unique
+  password                String
+  name                    String
+  role                    Role             @default(USER)
+  address                 String?
+  phone                   String?
+  Preferences             Preferences?
+  ingredients             Ingredient[]
+  favoriteRecipe          FavoriteRecipe[]
+  nutritionProfile        NutritionProfile?
+  mealPlans               MealPlan[]
+  products                Product[]
+  conversationsAsUser     Conversation[] @relation("UserConversations")
+  conversationsAsNutritionist Conversation[] @relation("NutritionistConversations")
 }
 
 enum Role{
@@ -59,4 +66,62 @@ model FavoriteRecipe {
   image     String
   userId    Int
   user      User    @relation(fields: [userId], references: [id])
+}
+
+
+model NutritionProfile {
+  id              Int     @id @default(autoincrement())
+  userId          Int     @unique
+  weight          Float
+  height          Float
+  age             Int
+  gender          String
+  activityLevel   String
+  goal            String
+  user            User    @relation(fields: [userId], references: [id])
+}
+
+
+model MealPlan{
+  id              Int     @id @default(autoincrement())
+  date            DateTime
+  mealType        String // "breakfast" | "lunch" | "dinner"
+  calories        Int
+  recipeId        Int
+  title           String
+  protein         Int       @default(0)
+  carbs           Int       @default(0)
+  fat             Int       @default(0)
+  userId          Int
+  user            User    @relation(fields:[userId], references:[id])
+}
+
+model Product{
+  id              Int     @id @default(autoincrement())
+  name            String
+  price           Float
+  quantity        Int
+  category        String
+  createdAt       DateTime  @default(now())
+  farmerId          Int
+  farmer            User    @relation(fields:[farmerId], references:[id])
+}
+
+model Conversation{
+  id              Int       @id @default(autoincrement())
+  userId          Int
+  nutritionistId  Int
+  createdAt       DateTime  @default(now())
+  message         Message[]
+  user            User    @relation("UserConversations",fields:[userId], references:[id])
+  nutritionist    User    @relation("NutritionistConversations",fields:[nutritionistId], references:[id])
+}
+
+model Message{
+  id             Int      @id @default(autoincrement())
+  content        String
+  senderRole     Role
+  createdAt      DateTime @default(now())
+  conversationId Int
+  conversation   Conversation @relation(fields: [conversationId], references: [id])
 }
